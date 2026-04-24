@@ -166,6 +166,26 @@ address {
   color: var(--muted);
 }
 
+.hero-highlights {
+  display: grid;
+  gap: 0.85rem;
+  max-width: 32rem;
+  margin: 1.5rem 0 0;
+}
+
+.hero-highlights p {
+  margin: 0;
+  padding: 0.9rem 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(77, 107, 87, 0.16);
+  background: rgba(255, 249, 242, 0.68);
+  box-shadow: 0 12px 30px rgba(94, 57, 42, 0.08);
+}
+
+.hero-highlights strong {
+  color: var(--text);
+}
+
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
@@ -233,6 +253,36 @@ address {
     radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.7), transparent 20%),
     linear-gradient(180deg, #f7cfc1 0%, #f2ded1 54%, #dbe7da 100%);
   box-shadow: var(--shadow);
+}
+
+.vase {
+  position: absolute;
+  left: 50%;
+  bottom: 4.25rem;
+  width: 10rem;
+  height: 8.75rem;
+  transform: translateX(-50%);
+  border-radius: 2.4rem 2.4rem 1.7rem 1.7rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 246, 241, 0.25)),
+    linear-gradient(180deg, rgba(188, 140, 129, 0.2), rgba(188, 140, 129, 0.04));
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 20px 35px rgba(94, 57, 42, 0.12);
+}
+
+.vase::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -1.1rem;
+  width: 4rem;
+  height: 1.5rem;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: rgba(255, 249, 242, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.82);
 }
 
 .flower,
@@ -446,14 +496,54 @@ address {
     transparent;
 }
 
+.story-points {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0;
+  margin: 1.5rem 0 0;
+  list-style: none;
+}
+
+.story-points li {
+  position: relative;
+  padding-left: 1.6rem;
+  color: var(--muted);
+}
+
+.story-points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.72rem;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: var(--leaf-soft);
+  box-shadow: 0 0 0 0.25rem rgba(77, 107, 87, 0.12);
+}
+
 .contact-grid {
   align-items: start;
 }
 
 .contact-card {
   font-style: normal;
+}
+
+.contact-list {
   display: grid;
   gap: 1rem;
+  margin: 0;
+}
+
+.contact-list div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.contact-list dt,
+.contact-list dd {
+  margin: 0;
 }
 
 .contact-card p,
@@ -462,6 +552,23 @@ address {
   color: var(--muted);
   text-decoration: none;
   overflow-wrap: anywhere;
+}
+
+.contact-card a:hover,
+.contact-card a:focus-visible,
+.nav-links a:hover,
+.nav-links a:focus-visible {
+  color: var(--accent-dark);
+}
+
+.button-primary:hover,
+.button-primary:focus-visible {
+  background: var(--accent-dark);
+}
+
+.button-secondary:hover,
+.button-secondary:focus-visible {
+  background: rgba(255, 255, 255, 0.72);
 }
 
 .site-footer {
@@ -524,6 +631,16 @@ address {
 
   .hero-art {
     min-height: 360px;
+  }
+
+  .hero-highlights {
+    max-width: none;
+  }
+
+  .vase {
+    width: 8.5rem;
+    height: 7.5rem;
+    bottom: 4rem;
   }
 
   .flower-one {

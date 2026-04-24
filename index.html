@@ -25,16 +25,20 @@
       </div>
     </header>
 
-    <main id="top">
-      <section class="hero">
-        <div class="wrap hero-grid" id="content">
+    <main id="content">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="wrap hero-grid">
           <div class="hero-copy">
             <p class="eyebrow">Neighborhood florist in Oakridge</p>
-            <h1>Flowers arranged with a local touch.</h1>
+            <h1 id="hero-title">Flowers for doorsteps, dinner tables, and every kind gesture.</h1>
             <p class="hero-text">
               Bloom &amp; Branch crafts seasonal bouquets for birthdays, thank-yous,
               and everyday tables with same-day local pickup and delivery.
             </p>
+            <div class="hero-highlights" aria-label="Ordering highlights">
+              <p><strong>Same-day local delivery</strong> for orders placed before 2pm.</p>
+              <p><strong>Seasonal florist choice</strong> built fresh each morning.</p>
+            </div>
             <div class="hero-actions">
               <a class="button button-primary" href="#contact">Order Today</a>
               <a class="button button-secondary" href="#bouquets">See Bouquets</a>
@@ -48,6 +52,7 @@
 
           <div class="hero-art" aria-hidden="true">
             <div class="art-panel">
+              <div class="vase"></div>
               <div class="flower flower-one"></div>
               <div class="flower flower-two"></div>
               <div class="flower flower-three"></div>
@@ -66,11 +71,11 @@
         </div>
       </section>
 
-      <section class="featured" id="bouquets">
+      <section class="featured" id="bouquets" aria-labelledby="bouquets-title">
         <div class="wrap">
           <div class="section-heading">
             <p class="eyebrow">Featured bouquets</p>
-            <h2>Best sellers from the cooler</h2>
+            <h2 id="bouquets-title">Best sellers from the cooler</h2>
             <p>
               Designed for gifting, celebrations, and brightening up the week.
             </p>
@@ -110,11 +115,11 @@
         </div>
       </section>
 
-      <section class="story" id="story">
+      <section class="story" id="story" aria-labelledby="story-title">
         <div class="wrap story-grid">
           <div>
             <p class="eyebrow">About Bloom &amp; Branch</p>
-            <h2>Small-shop floristry rooted in the neighborhood.</h2>
+            <h2 id="story-title">Small-shop floristry rooted in the neighborhood.</h2>
           </div>
           <div class="story-copy">
             <p>
@@ -127,15 +132,20 @@
               help customers find flowers for everyday kindness as often as major
               events.
             </p>
+            <ul class="story-points">
+              <li>Seasonal sourcing with a simple, always-fresh menu.</li>
+              <li>Custom bouquets for birthdays, sympathy, hosting, and thank-yous.</li>
+              <li>Design advice in-store for customers who want something personal.</li>
+            </ul>
           </div>
         </div>
       </section>
 
-      <section class="contact" id="contact">
+      <section class="contact" id="contact" aria-labelledby="contact-title">
         <div class="wrap contact-grid">
           <div class="section-heading contact-heading">
             <p class="eyebrow">Contact &amp; orders</p>
-            <h2>Call ahead, email us, or stop by the shop.</h2>
+            <h2 id="contact-title">Call ahead, email us, or stop by the shop.</h2>
             <p>
               We take pickup requests, local delivery orders, and custom bouquet
               inquiries during shop hours.
@@ -143,27 +153,31 @@
           </div>
 
           <address class="contact-card">
-            <div>
-              <span class="label">Phone</span>
-              <a href="tel:+15550137822">(555) 013-7822</a>
-            </div>
-            <div>
-              <span class="label">Email</span>
-              <a href="mailto:hello@bloomandbranchflowers.com"
-                >hello@bloomandbranchflowers.com</a
-              >
-            </div>
-            <div>
-              <span class="label">Hours</span>
-              <p>Mon-Fri: 9am-6pm</p>
-              <p>Sat: 9am-4pm</p>
-              <p>Sun: Closed</p>
-            </div>
-            <div>
-              <span class="label">Address</span>
-              <p>214 Cedar Lane</p>
-              <p>Oakridge, CA 94000</p>
-            </div>
+            <dl class="contact-list">
+              <div>
+                <dt class="label">Phone</dt>
+                <dd><a href="tel:+15550137822">(555) 013-7822</a></dd>
+              </div>
+              <div>
+                <dt class="label">Email</dt>
+                <dd>
+                  <a href="mailto:hello@bloomandbranchflowers.com"
+                    >hello@bloomandbranchflowers.com</a
+                  >
+                </dd>
+              </div>
+              <div>
+                <dt class="label">Hours</dt>
+                <dd>Mon-Fri: 9am-6pm</dd>
+                <dd>Sat: 9am-4pm</dd>
+                <dd>Sun: Closed</dd>
+              </div>
+              <div>
+                <dt class="label">Address</dt>
+                <dd>214 Cedar Lane</dd>
+                <dd>Oakridge, CA 94000</dd>
+              </div>
+            </dl>
           </address>
         </div>
       </section>
