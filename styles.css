@@ -135,10 +135,10 @@ p {
 }
 
 h1 {
-  font-size: clamp(2.8rem, 7vw, 5.5rem);
-  line-height: 0.96;
+  font-size: clamp(3.2rem, 8vw, 6.4rem);
+  line-height: 0.92;
   margin-bottom: 1rem;
-  max-width: 9ch;
+  max-width: 11ch;
 }
 
 h2 {
@@ -176,7 +176,7 @@ address {
 .hero-highlights p {
   margin: 0;
   padding: 0.9rem 1rem;
-  border-radius: 1rem;
+  border-radius: 8px;
   border: 1px solid rgba(77, 107, 87, 0.16);
   background: rgba(255, 249, 242, 0.68);
   box-shadow: 0 12px 30px rgba(94, 57, 42, 0.08);
@@ -247,7 +247,7 @@ address {
 .art-panel {
   position: relative;
   min-height: 100%;
-  border-radius: 2rem;
+  border-radius: 8px;
   overflow: hidden;
   background:
     radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.7), transparent 20%),
@@ -397,7 +397,7 @@ address {
   right: 1.25rem;
   bottom: 1.25rem;
   padding: 1rem 1.1rem;
-  border-radius: 1.2rem;
+  border-radius: 8px;
   background: rgba(255, 249, 242, 0.84);
   border: 1px solid rgba(255, 255, 255, 0.65);
   backdrop-filter: blur(10px);
@@ -435,7 +435,7 @@ address {
 .product-card,
 .contact-card {
   padding: 1.4rem;
-  border-radius: 1.5rem;
+  border-radius: 8px;
   background: var(--surface);
   border: 1px solid var(--line);
   box-shadow: var(--shadow);
@@ -443,7 +443,7 @@ address {
 
 .product-art {
   height: 13rem;
-  border-radius: 1.1rem;
+  border-radius: 8px;
   margin-bottom: 1.1rem;
   background-size: cover;
 }
