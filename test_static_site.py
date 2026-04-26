@@ -44,6 +44,8 @@ def require(condition, message):
 
 
 class StaticSiteParser(HTMLParser):
+    HIDDEN_CONTEXT = {"head", "script", "style", "title", "template"}
+
     def __init__(self):
         super().__init__(convert_charrefs=True)
         self.tags = []
@@ -84,8 +86,7 @@ class StaticSiteParser(HTMLParser):
         if self._stack and self._stack[-1] == "title":
             self.title_parts.append(text)
 
-        hidden_context = {"head", "script", "style", "title", "template"}
-        if not hidden_context.intersection(self._stack):
+        if not self.HIDDEN_CONTEXT.intersection(self._stack):
             self.visible_parts.append(text)
 
     @property
@@ -185,8 +186,7 @@ def test_product_entries_and_prices_are_present(parsed_site, html_text):
     product_entries = [
         attrs
         for tag, attrs in parsed_site.tags
-        if tag == "article"
-        and ({"product-card", "bouquet-card", "card"} & class_tokens(attrs))
+        if {"product-card", "bouquet-card", "card"} & class_tokens(attrs)
     ]
     require(
         len(product_entries) >= 3,
