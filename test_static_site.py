@@ -20,6 +20,22 @@ DISALLOWED_PACKAGE_OR_BUILD_FILES = {
     "dist",
     "build",
 }
+VOID_ELEMENTS = {
+    "area",
+    "base",
+    "br",
+    "col",
+    "embed",
+    "hr",
+    "img",
+    "input",
+    "link",
+    "meta",
+    "param",
+    "source",
+    "track",
+    "wbr",
+}
 
 
 def require(condition, message):
@@ -41,7 +57,8 @@ class StaticSiteParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
         self.tags.append((tag, attrs))
-        self._stack.append(tag)
+        if tag not in VOID_ELEMENTS:
+            self._stack.append(tag)
 
         if attrs.get("id"):
             self.ids.add(attrs["id"])
@@ -241,6 +258,8 @@ def test_referenced_local_css_files_do_not_use_external_urls(parsed_site):
     ]
     external_urls = []
     for css_path in filter(None, css_paths):
+        if not css_path.exists():
+            continue
         css_text = css_path.read_text(encoding="utf-8")
         external_urls.extend(
             f"{css_path.name}: {value}" for value in external_url_references(css_text)
