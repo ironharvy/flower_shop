@@ -53,6 +53,7 @@ class StaticSiteParser(HTMLParser):
         self.links = []
         self.assets = []
         self.title_parts = []
+        self.style_parts = []
         self.visible_parts = []
         self._stack = []
 
@@ -79,6 +80,9 @@ class StaticSiteParser(HTMLParser):
                 break
 
     def handle_data(self, data):
+        if self._stack and self._stack[-1] == "style":
+            self.style_parts.append(data)
+
         text = " ".join(data.split())
         if not text:
             return
@@ -96,6 +100,10 @@ class StaticSiteParser(HTMLParser):
     @property
     def visible_text(self):
         return " ".join(self.visible_parts)
+
+    @property
+    def inline_styles(self):
+        return "\n".join(self.style_parts)
 
 
 @pytest.fixture(scope="module")
@@ -212,6 +220,10 @@ def test_contact_details_are_complete(parsed_site):
         if tag == "a" and attr == "href" and value.startswith("mailto:")
     ]
     visible = parsed_site.visible_text.lower()
+    visible_lines = [part.lower() for part in parsed_site.visible_parts]
+    address_pattern = re.compile(
+        r"\d+\s+\w+.*\b(lane|street|st|avenue|ave|road|rd|drive|dr)\b"
+    )
 
     require(phone_links, "Contact details should include a phone link with a tel: href")
     require(email_links, "Contact details should include an email link with a mailto: href")
@@ -222,21 +234,18 @@ def test_contact_details_are_complete(parsed_site):
     )
     require(
         "address" in visible
-        or re.search(
-            r"\d+\s+\w+.*\b(lane|street|st|avenue|ave|road|rd|drive|dr)\b",
-            visible,
-        ),
+        or any(address_pattern.search(line) for line in visible_lines),
         "Contact details should include address text",
     )
 
 
-def test_no_external_urls_are_referenced(parsed_site, html_text):
+def test_no_external_urls_are_referenced(parsed_site):
     external_assets = [
         f"{tag}[{attr}]={value!r}"
         for tag, attr, value in parsed_site.assets
         if value.startswith("//") or urlparse(value).scheme in {"http", "https"}
     ]
-    external_css_urls = external_url_references(html_text)
+    external_css_urls = external_url_references(parsed_site.inline_styles)
 
     require(
         not external_assets,
