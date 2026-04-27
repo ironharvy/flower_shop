@@ -8,6 +8,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parent
 INDEX = ROOT / "index.html"
+AIORCHESTRA_CONFIG = ROOT / ".aiorchestra" / "config.yaml"
 DISALLOWED_PACKAGE_OR_BUILD_FILES = {
     "package.json",
     "package-lock.json",
@@ -69,7 +70,7 @@ class StaticSiteParser(HTMLParser):
         if tag == "link":
             self.links.append(attrs)
 
-        for attr in ("href", "src", "poster", "action"):
+        for attr in ("href", "src", "srcset", "poster", "action", "style"):
             if attrs.get(attr):
                 self.assets.append((tag, attr, attrs[attr]))
 
@@ -123,21 +124,56 @@ def local_path_from_url(value):
     parsed = urlparse(value)
     if parsed.scheme or parsed.netloc or value.startswith(("#", "mailto:", "tel:")):
         return None
-    return (ROOT / parsed.path).resolve()
+    path = (ROOT / parsed.path).resolve()
+    try:
+        path.relative_to(ROOT)
+    except ValueError:
+        return None
+    return path
 
 
 def class_tokens(attrs):
     return set(attrs.get("class", "").split())
 
 
+def is_external_url(value):
+    return value.startswith("//") or urlparse(value).scheme in {"http", "https"}
+
+
+def external_asset_references(tag, attr, value):
+    if attr == "style":
+        return []
+    if attr == "srcset":
+        references = []
+        for candidate in value.split(","):
+            parts = candidate.strip().split(maxsplit=1)
+            if not parts:
+                continue
+            url = parts[0]
+            if is_external_url(url):
+                references.append(f"{tag}[{attr}]={url!r}")
+        return references
+    if is_external_url(value):
+        return [f"{tag}[{attr}]={value!r}"]
+    return []
+
+
 def external_url_references(text):
     candidates = re.findall(r"url\(\s*['\"]?([^'\")]+)", text)
     candidates.extend(re.findall(r"@import\s+['\"]([^'\"]+)", text))
-    return [
-        value
-        for value in candidates
-        if value.startswith("//") or urlparse(value).scheme in {"http", "https"}
-    ]
+    return [value for value in candidates if is_external_url(value)]
+
+
+def test_aiorchestra_runs_pytest():
+    require(
+        AIORCHESTRA_CONFIG.exists(),
+        ".aiorchestra/config.yaml should exist so AIOrchestra can run validation",
+    )
+    config_text = AIORCHESTRA_CONFIG.read_text(encoding="utf-8")
+    require(
+        re.search(r"(?m)^\s*test_command\s*:\s*pytest\s*$", config_text),
+        ".aiorchestra/config.yaml should set test_command to pytest",
+    )
 
 
 def test_index_links_existing_local_css(parsed_site):
@@ -154,7 +190,7 @@ def test_index_links_existing_local_css(parsed_site):
         path = local_path_from_url(href)
         if path is None:
             missing.append(f"{href!r} is not a local CSS file")
-        elif path.suffix != ".css" or not path.exists():
+        elif path.suffix != ".css" or not path.is_file():
             missing.append(f"{href!r} does not resolve to an existing CSS file")
 
     require(
@@ -240,17 +276,26 @@ def test_contact_details_are_complete(parsed_site):
 
 
 def test_no_external_urls_are_referenced(parsed_site):
-    external_assets = [
-        f"{tag}[{attr}]={value!r}"
-        for tag, attr, value in parsed_site.assets
-        if value.startswith("//") or urlparse(value).scheme in {"http", "https"}
-    ]
+    external_assets = []
+    for tag, attr, value in parsed_site.assets:
+        external_assets.extend(external_asset_references(tag, attr, value))
+    inline_style_urls = []
+    for tag, attr, value in parsed_site.assets:
+        if attr == "style":
+            inline_style_urls.extend(
+                f"{tag}[style]={url!r}" for url in external_url_references(value)
+            )
     external_css_urls = external_url_references(parsed_site.inline_styles)
 
     require(
         not external_assets,
         "No external CDN, framework, font, or image URLs should be referenced: "
         + ", ".join(external_assets),
+    )
+    require(
+        not inline_style_urls,
+        "No external URLs should be referenced from inline style attributes: "
+        + ", ".join(inline_style_urls),
     )
     require(
         not external_css_urls,
