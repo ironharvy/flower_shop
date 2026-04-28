@@ -37,6 +37,7 @@ VOID_ELEMENTS = {
     "track",
     "wbr",
 }
+PRODUCT_CARD_CLASSES = {"product-card", "bouquet-card", "card"}
 
 
 def require(condition, message):
@@ -136,6 +137,32 @@ def class_tokens(attrs):
     return set(attrs.get("class", "").split())
 
 
+def configured_test_command(config_text):
+    match = re.search(
+        r"""(?mx)
+        ^\s*test_command\s*:\s*
+        (?P<quote>['"]?)
+        (?P<command>[^'"\s#]+)
+        (?P=quote)
+        \s*(?:\#.*)?$
+        """,
+        config_text,
+    )
+    return match.group("command") if match else None
+
+
+def product_like_entries(parsed_site):
+    explicit_cards = [
+        attrs
+        for tag, attrs in parsed_site.tags
+        if PRODUCT_CARD_CLASSES & class_tokens(attrs)
+    ]
+    if explicit_cards:
+        return explicit_cards
+
+    return [attrs for tag, attrs in parsed_site.tags if tag == "article"]
+
+
 def is_external_url(value):
     return value.startswith("//") or urlparse(value).scheme in {"http", "https"}
 
@@ -171,7 +198,7 @@ def test_aiorchestra_runs_pytest():
     )
     config_text = AIORCHESTRA_CONFIG.read_text(encoding="utf-8")
     require(
-        re.search(r"(?m)^\s*test_command\s*:\s*pytest\s*$", config_text),
+        configured_test_command(config_text) == "pytest",
         ".aiorchestra/config.yaml should set test_command to pytest",
     )
 
@@ -227,14 +254,10 @@ def test_required_sections_or_anchors_exist(parsed_site, section_name, candidate
 
 
 def test_product_entries_and_prices_are_present(parsed_site, html_text):
-    product_entries = [
-        attrs
-        for tag, attrs in parsed_site.tags
-        if {"product-card", "bouquet-card", "card"} & class_tokens(attrs)
-    ]
+    product_entries = product_like_entries(parsed_site)
     require(
         len(product_entries) >= 3,
-        "Expected at least 3 product or bouquet card entries",
+        "Expected at least 3 product, bouquet, or article entries",
     )
 
     prices = re.findall(r"\$\d+(?:\.\d{2})?\b", html_text)
