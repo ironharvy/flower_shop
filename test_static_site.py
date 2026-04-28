@@ -125,7 +125,7 @@ def local_path_from_url(value):
     parsed = urlparse(value)
     if parsed.scheme or parsed.netloc or value.startswith(("#", "mailto:", "tel:")):
         return None
-    path = (ROOT / parsed.path).resolve()
+    path = (ROOT / parsed.path.lstrip("/")).resolve()
     try:
         path.relative_to(ROOT)
     except ValueError:
