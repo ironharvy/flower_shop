@@ -186,6 +186,7 @@ def external_asset_references(tag, attr, value):
 
 
 def external_url_references(text):
+    text = re.sub(r"/\*.*?\*/", "", text, flags=re.DOTALL)
     candidates = re.findall(r"url\(\s*['\"]?([^'\")]+)", text)
     candidates.extend(re.findall(r"@import\s+['\"]([^'\"]+)", text))
     return [value for value in candidates if is_external_url(value)]
@@ -216,7 +217,7 @@ def test_index_links_existing_local_css(parsed_site):
         href = link.get("href", "")
         path = local_path_from_url(href)
         if path is None:
-            missing.append(f"{href!r} is not a local CSS file")
+            missing.append(f"{href!r} is an external URL, not a local CSS file")
         elif path.suffix != ".css" or not path.is_file():
             missing.append(f"{href!r} does not resolve to an existing CSS file")
 
