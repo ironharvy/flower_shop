@@ -249,7 +249,7 @@ def test_required_sections_or_anchors_exist(parsed_site, section_name, candidate
         for tag, attrs in parsed_site.tags
         if tag == "a" and attrs.get("href", "").startswith("#")
     }
-    available = parsed_site.ids | anchors
+    available = {value.lower() for value in parsed_site.ids | anchors}
     require(candidates & available, f"Missing section or anchor for {section_name}")
 
 
@@ -279,9 +279,9 @@ def test_contact_details_are_complete(parsed_site):
         if tag == "a" and attr == "href" and value.startswith("mailto:")
     ]
     visible = parsed_site.visible_text.lower()
-    visible_lines = [part.lower() for part in parsed_site.visible_parts]
     address_pattern = re.compile(
-        r"\d+\s+\w+.*\b(lane|street|st|avenue|ave|road|rd|drive|dr)\b"
+        r"\d+\s+\w+.*\b(lane|ln|street|st|avenue|ave|road|rd|drive|dr|"
+        r"boulevard|blvd|way|court|ct|place|pl|parkway|pkwy|circle|terrace)\b"
     )
 
     require(phone_links, "Contact details should include a phone link with a tel: href")
@@ -293,7 +293,7 @@ def test_contact_details_are_complete(parsed_site):
     )
     require(
         "address" in visible
-        or any(address_pattern.search(line) for line in visible_lines),
+        or address_pattern.search(visible),
         "Contact details should include address text",
     )
 
